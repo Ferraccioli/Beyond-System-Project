@@ -49,10 +49,10 @@ export default function SubHeader({
 
                 {/* History Icon */}
                 <Button
-                    variant="ghost"
+                    variant="secondary"
                     size="md"
                     iconOnly
-                    className="w-7 h-7 text-gray-400 hover:text-gray-600"
+                    className="w-7 h-7"
                 >
                     <History sx={{ fontSize: 18 }} />
                 </Button>

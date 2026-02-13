@@ -12,7 +12,11 @@ const meta = {
     argTypes: {
         variant: {
             control: 'select',
-            options: ['primary', 'secondary', 'ghost', 'tertiary'],
+            options: ['primary', 'secondary', 'tertiary', 'ghost'],
+        },
+        intent: {
+            control: 'select',
+            options: ['default', 'success', 'info', 'alert', 'neutral', 'warning'],
         },
         size: {
             control: 'radio',
@@ -44,17 +48,36 @@ export const Secondary: Story = {
     },
 };
 
-export const Ghost: Story = {
-    args: {
-        variant: 'ghost',
-        children: 'Ghost Button',
-    },
-};
-
 export const Tertiary: Story = {
     args: {
         variant: 'tertiary',
         children: 'Tertiary',
+    },
+};
+
+export const Ghost: Story = {
+    args: {
+        variant: 'ghost',
+        children: 'Ghost Action',
+        startIcon: <Add />,
+    },
+};
+
+export const SuccessGhost: Story = {
+    args: {
+        variant: 'ghost',
+        intent: 'success',
+        children: 'Confirmar',
+        startIcon: <Save />,
+    },
+};
+
+export const AlertSecondary: Story = {
+    args: {
+        variant: 'secondary',
+        intent: 'alert',
+        children: 'Deletar',
+        startIcon: <Delete />,
     },
 };
 

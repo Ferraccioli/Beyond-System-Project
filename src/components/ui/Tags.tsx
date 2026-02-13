@@ -46,8 +46,8 @@ const variantStyles: Record<TagsVariant, { bg: string; text: string }> = {
 };
 
 const sizeStyles: Record<TagsSize, string> = {
-    md: "h-[18px] px-2 rounded-xs text-xs",
-    lg: "h-[24px] px-3 rounded-sm text-sm",
+    md: "h-[18px] rounded-xs text-[11px]",
+    lg: "h-[24px] rounded-sm text-xs",
 };
 
 export default function Tags({
@@ -61,6 +61,10 @@ export default function Tags({
 }: TagsProps) {
     const { bg, text } = variantStyles[variant];
 
+    const paddingStyles = size === "md"
+        ? clsx(IconLeft ? "pl-1" : "pl-2", IconRight ? "pr-1" : "pr-2")
+        : clsx(IconLeft ? "pl-2" : "pl-3", IconRight ? "pr-2" : "pr-3");
+
     return (
         <div
             className={clsx(
@@ -68,14 +72,15 @@ export default function Tags({
                 bg,
                 text,
                 sizeStyles[size],
+                paddingStyles,
                 onClick && "cursor-pointer hover:opacity-80",
                 className
             )}
             onClick={onClick}
         >
-            {IconLeft && <IconLeft className="w-3 h-3 shrink-0" sx={{ fontSize: size === 'md' ? 12 : 14 }} />}
+            {IconLeft && <IconLeft className="w-3 h-3 shrink-0" sx={{ fontSize: 14 }} />}
             <span className="leading-none">{label}</span>
-            {IconRight && <IconRight className="w-3 h-3 shrink-0" sx={{ fontSize: size === 'md' ? 12 : 14 }} />}
+            {IconRight && <IconRight className="w-3 h-3 shrink-0" sx={{ fontSize: 14 }} />}
         </div>
     );
 }

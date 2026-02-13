@@ -283,7 +283,7 @@ export default function TextArea({
                         </div>
                         <div className="flex gap-2">
                             <Button
-                                variant="ghost"
+                                variant="tertiary"
                                 size="md"
                                 onClick={onCancel}
                                 className="text-gray-400 hover:text-gray-600"
