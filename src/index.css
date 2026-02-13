@@ -1,0 +1,406 @@
+@import "tailwindcss";
+
+:root {
+  /* ========================================= */
+  /* BASE TOKENS - Colors                      */
+  /* ========================================= */
+
+  /* Neutral / Gray */
+  --color-gray-0: #ffffff;
+  --color-gray-50: #f6f8fa;
+  --color-gray-100: #eff1f4;
+  --color-gray-200: #d9d9e0;
+  --color-gray-300: #cbcdd3;
+  --color-gray-400: #94979b;
+  --color-gray-500: #696c71;
+  --color-gray-600: #4e4f51;
+  --color-gray-700: #3c3e42;
+  --color-gray-800: #202123;
+  --color-gray-900: #131414;
+  --color-gray-950: #0f1010;
+
+  /* Blue */
+  --color-blue-50: #ecf1ff;
+  --color-blue-100: #c2d3ff;
+  --color-blue-200: #98b5ff;
+  --color-blue-300: #6e97ff;
+  --color-blue-400: #4378ff;
+  --color-blue-500: #3264e2;
+  --color-blue-600: #2351c5;
+  --color-blue-700: #1740a8;
+  --color-blue-800: #0d318a;
+  --color-blue-900: #06236d;
+  --color-blue-950: #011750;
+
+  /* Red */
+  --color-red-50: #fed5d5;
+  --color-red-100: #feabab;
+  --color-red-200: #fd8181;
+  --color-red-300: #fd5757;
+  --color-red-400: #fc2d2d;
+  --color-red-500: #fc0303;
+  --color-red-600: #d20303;
+  --color-red-700: #a80202;
+  --color-red-800: #7e0202;
+  --color-red-900: #540101;
+  --color-red-950: #2a0101;
+
+  /* Yellow */
+  --color-yellow-50: #fffbe5;
+  --color-yellow-100: #fff1aa;
+  --color-yellow-200: #ffeb80;
+  --color-yellow-300: #ffe455;
+  --color-yellow-400: #ffdd2b;
+  --color-yellow-500: #ffd600;
+  --color-yellow-600: #f0b800;
+  --color-yellow-700: #c79200;
+  --color-yellow-800: #a87300;
+  --color-yellow-900: #805500;
+  --color-yellow-950: #4d3300;
+
+  /* Green */
+  --color-green-50: #dff7e4;
+  --color-green-100: #bfefca;
+  --color-green-200: #9fe8af;
+  --color-green-300: #7fe095;
+  --color-green-400: #60d87a;
+  --color-green-500: #40d05f;
+  --color-green-600: #2cb64b;
+  --color-green-700: #24923c;
+  --color-green-800: #1b6d2d;
+  --color-green-900: #12491e;
+  --color-green-950: #09240f;
+
+  /* Orange */
+  --color-orange-50: #ffeee5;
+  --color-orange-100: #ffd0b7;
+  --color-orange-200: #ffb28a;
+  --color-orange-300: #ff945c;
+  --color-orange-400: #ff762e;
+  --color-orange-500: #f95600;
+  --color-orange-600: #d04800;
+  --color-orange-700: #a73a00;
+  --color-orange-800: #7f2c00;
+  --color-orange-900: #561e00;
+  --color-orange-950: #2f1000;
+
+  /* Purple */
+  --color-purple-50: #f6ecff;
+  --color-purple-100: #e6cbff;
+  --color-purple-200: #d6a9ff;
+  --color-purple-300: #c688ff;
+  --color-purple-400: #b667ff;
+  --color-purple-500: #a745ff;
+  --color-purple-600: #9333ea;
+  --color-purple-700: #7821c8;
+  --color-purple-800: #6012a6;
+  --color-purple-900: #490784;
+  --color-purple-950: #330062;
+
+  /* ========================================= */
+  /* SYSTEM SPECIFIC TOKENS (GS Engage - 'ge') */
+  /* ========================================= */
+  --color-brand-50: var(--color-blue-50);
+  --color-brand-100: var(--color-blue-100);
+  --color-brand-200: var(--color-blue-200);
+  --color-brand-300: var(--color-blue-300);
+  --color-brand-400: var(--color-blue-400);
+  --color-brand-500: var(--color-blue-500);
+  /* Brand Selected */
+  --color-brand-600: var(--color-blue-600);
+  --color-brand-700: var(--color-blue-700);
+  /* Brand Default */
+  --color-brand-800: var(--color-blue-800);
+  /* Brand Hover */
+  --color-brand-900: var(--color-blue-900);
+
+  --color-surface-brand: var(--color-blue-50);
+
+  /* ========================================= */
+  /* ALIAS TOKENS                              */
+  /* ========================================= */
+
+  /* Text / Generic */
+  --color-default: var(--color-gray-800);
+  --color-body: var(--color-gray-500);
+  --color-muted: var(--color-gray-400);
+  --color-disabled: var(--color-gray-300);
+  --color-inverted: var(--color-gray-0);
+
+  /* Semantics */
+  --color-neutral: var(--color-gray-500);
+  --color-neutral-hover: var(--color-gray-600);
+
+  --color-success: var(--color-green-700);
+  --color-success-hover: var(--color-green-800);
+
+  --color-warning: var(--color-yellow-700);
+  --color-warning-hover: var(--color-yellow-800);
+
+  --color-alert: var(--color-red-500);
+  --color-alert-hover: var(--color-red-600);
+
+  --color-info: var(--color-blue-400);
+  --color-info-hover: var(--color-blue-500);
+
+  --color-special: var(--color-purple-500);
+  --color-special-hover: var(--color-purple-600);
+
+  /* Surfaces */
+  --color-surface-default: var(--color-gray-0);
+  --color-surface-dark: var(--color-gray-50);
+  --color-surface-darker: var(--color-gray-100);
+  --color-surface-inverted: var(--color-gray-800);
+  --color-surface-neutral: var(--color-gray-100);
+  --color-surface-success: var(--color-green-50);
+  --color-surface-warning: var(--color-yellow-50);
+  --color-surface-alert: var(--color-red-50);
+  --color-surface-info: var(--color-blue-50);
+  --color-surface-special: var(--color-purple-50);
+
+  /* Outlines */
+  --color-outline-default: var(--color-gray-200);
+  --color-outline-dark: var(--color-gray-300);
+
+  /* Data */
+  --color-data-orange: var(--color-orange-300);
+  --color-data-black: var(--color-gray-700);
+  --color-data-green: var(--color-green-600);
+  --color-data-light-blue: var(--color-blue-200);
+  --color-data-blue: var(--color-blue-600);
+  --color-data-yellow: var(--color-yellow-500);
+  --color-data-purple: var(--color-purple-400);
+  --color-data-gray: var(--color-gray-300);
+  --color-data-red: var(--color-red-400);
+  --color-data-light-red: var(--color-red-100);
+
+  /* Spacing */
+  --spacing-0: 0px;
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --spacing-7: 28px;
+  --spacing-8: 32px;
+  --spacing-9: 36px;
+  --spacing-10: 40px;
+
+  /* Border Radius */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius-3xl: 24px;
+  --radius-4xl: 32px;
+  --radius-full: 9999px;
+
+  /* Typography - Font Size */
+  --text-3xs: 10px;
+  --text-2xs: 11px;
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-lg: 18px;
+  --text-xl: 20px;
+  --text-2xl: 24px;
+  --text-3xl: 30px;
+  --text-4xl: 36px;
+  --text-5xl: 48px;
+  --text-6xl: 60px;
+  --text-7xl: 72px;
+  --text-8xl: 96px;
+  --text-9xl: 128px;
+}
+
+@theme inline {
+  /* ========================================= */
+  /* BASE TOKENS EXPOSED                       */
+  /* ========================================= */
+  --color-gray-0: var(--color-gray-0);
+  --color-gray-50: var(--color-gray-50);
+  --color-gray-100: var(--color-gray-100);
+  --color-gray-200: var(--color-gray-200);
+  --color-gray-300: var(--color-gray-300);
+  --color-gray-400: var(--color-gray-400);
+  --color-gray-500: var(--color-gray-500);
+  --color-gray-600: var(--color-gray-600);
+  --color-gray-700: var(--color-gray-700);
+  --color-gray-800: var(--color-gray-800);
+  --color-gray-900: var(--color-gray-900);
+  --color-gray-950: var(--color-gray-950);
+
+  --color-blue-50: var(--color-blue-50);
+  --color-blue-100: var(--color-blue-100);
+  --color-blue-200: var(--color-blue-200);
+  --color-blue-300: var(--color-blue-300);
+  --color-blue-400: var(--color-blue-400);
+  --color-blue-500: var(--color-blue-500);
+  --color-blue-600: var(--color-blue-600);
+  --color-blue-700: var(--color-blue-700);
+  --color-blue-800: var(--color-blue-800);
+  --color-blue-900: var(--color-blue-900);
+  --color-blue-950: var(--color-blue-950);
+
+  /* Add other colors as needed, or rely on Tailwind default palette if they match. 
+     Since users provided specific hexes, we should probably expose all.
+     But mapping ALL 50-950 for all colors is verbose.
+     We prioritize Semantic & Brand tokens for usage. */
+
+  --color-brand-50: var(--color-brand-50);
+  --color-brand-100: var(--color-brand-100);
+  --color-brand-200: var(--color-brand-200);
+  --color-brand-300: var(--color-brand-300);
+  --color-brand-400: var(--color-brand-400);
+  --color-brand-500: var(--color-brand-500);
+  --color-brand-600: var(--color-brand-600);
+  --color-brand-700: var(--color-brand-700);
+  --color-brand-800: var(--color-brand-800);
+  --color-brand-900: var(--color-brand-900);
+
+  --color-surface-brand: var(--color-surface-brand);
+
+  /* ========================================= */
+  /* ALIAS TOKENS EXPOSED                      */
+  /* ========================================= */
+
+  /* Text */
+  --color-default: var(--color-default);
+  --color-body: var(--color-body);
+  --color-muted: var(--color-muted);
+  --color-disabled: var(--color-disabled);
+  --color-inverted: var(--color-inverted);
+
+  /* Status */
+  --color-neutral: var(--color-neutral);
+  --color-neutral-hover: var(--color-neutral-hover);
+  --color-success: var(--color-success);
+  --color-success-hover: var(--color-success-hover);
+  --color-warning: var(--color-warning);
+  --color-warning-hover: var(--color-warning-hover);
+  --color-alert: var(--color-alert);
+  --color-alert-hover: var(--color-alert-hover);
+  --color-info: var(--color-info);
+  --color-info-hover: var(--color-info-hover);
+  --color-special: var(--color-special);
+  --color-special-hover: var(--color-special-hover);
+
+  /* Surfaces */
+  --color-surface-default: var(--color-surface-default);
+  --color-surface-dark: var(--color-surface-dark);
+  --color-surface-darker: var(--color-surface-darker);
+  --color-surface-inverted: var(--color-surface-inverted);
+  --color-surface-neutral: var(--color-surface-neutral);
+  --color-surface-success: var(--color-surface-success);
+  --color-surface-warning: var(--color-surface-warning);
+  --color-surface-alert: var(--color-surface-alert);
+  --color-surface-info: var(--color-surface-info);
+  --color-surface-special: var(--color-surface-special);
+
+  /* Outlines */
+  --color-outline-default: var(--color-outline-default);
+  --color-outline-dark: var(--color-outline-dark);
+
+  /* Data */
+  --color-data-orange: var(--color-data-orange);
+  --color-data-black: var(--color-data-black);
+  --color-data-green: var(--color-data-green);
+  --color-data-light-blue: var(--color-data-light-blue);
+  --color-data-blue: var(--color-data-blue);
+  --color-data-yellow: var(--color-data-yellow);
+  --color-data-purple: var(--color-data-purple);
+  --color-data-gray: var(--color-data-gray);
+  --color-data-red: var(--color-data-red);
+  --color-data-light-red: var(--color-data-light-red);
+
+  /* Typography */
+  --font-sans: var(--font-poppins), sans-serif;
+  --font-display: var(--font-poppins), sans-serif;
+
+  --text-3xs: var(--text-3xs);
+  --text-2xs: var(--text-2xs);
+
+  /* Spacing */
+  --spacing-4_5: 18px;
+  /* w-2xs = 18px */
+
+  /* Radius */
+  --radius-xs: var(--radius-xs);
+  --radius-4xl: var(--radius-4xl);
+
+  /* Toast Animations */
+  --animate-toast-in: slideInRight 0.3s ease-out forwards;
+
+  @keyframes slideInRight {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+}
+
+body {
+  background: var(--color-surface-default);
+  color: var(--color-default);
+  font-family: var(--font-sans);
+}
+
+/* Scrollbar styles to match "Premium" feel */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-gray-300);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gray-400);
+}
+
+/* Rich Text Editor Styles */
+.rich-text-editor {
+  font-family: 'Poppins', sans-serif !important;
+}
+
+.rich-text-editor a {
+  color: var(--color-info);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.rich-text-editor ul {
+  list-style-type: disc;
+  margin-left: 1.5rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.rich-text-editor ol {
+  list-style-type: decimal;
+  margin-left: 1.5rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.rich-text-editor li {
+  display: list-item;
+}
+
+.animate-toast-in {
+  animation: slideInRight 0.3s ease-out forwards;
+}
