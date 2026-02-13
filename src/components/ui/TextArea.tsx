@@ -10,8 +10,10 @@ import {
     FormatListNumbered,
     Image as ImageIcon,
 } from "@mui/icons-material";
+import { AnimatePresence } from "framer-motion";
 import Button from "./Button";
 import Dropdown from "./Dropdown";
+import DropdownMenu from "./DropdownMenu";
 
 export interface TextAreaProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
     label?: string;
@@ -58,7 +60,26 @@ export default function TextArea({
     const [isItalic, setIsItalic] = useState(false);
     const [isUnderline, setIsUnderline] = useState(false);
     const [isStrike, setIsStrike] = useState(false);
+
+
     const [hasContent, setHasContent] = useState(value !== "");
+
+    // Store last selection range to restore focus when inserting tags
+    const lastSelectionRange = useRef<Range | null>(null);
+
+    // Format Dropdown State
+    const [isFormatMenuOpen, setIsFormatMenuOpen] = useState(false);
+    const [currentFormat, setCurrentFormat] = useState('p');
+
+    // Tags Dropdown State
+    const [isTagMenuOpen, setIsTagMenuOpen] = useState(false);
+
+    const tagOptions = [
+        { value: '{{nomedocliente}}', label: 'Nome do Cliente' },
+        { value: '{{nomedaempresa}}', label: 'Nome da Empresa' },
+        { value: '{{cargo}}', label: 'Cargo' },
+        { value: '{{email}}', label: 'Email' },
+    ];
 
     // Initial value sync
     useEffect(() => {
@@ -76,6 +97,17 @@ export default function TextArea({
             setHasContent(textContent.trim() !== "" || (content !== "" && content !== "<br>"));
             onChange?.(content);
             checkActiveFormats();
+            saveSelection();
+        }
+    };
+
+    const saveSelection = () => {
+        const selection = window.getSelection();
+        if (selection && selection.rangeCount > 0) {
+            // Ensure selection is within the editor
+            if (editorRef.current && editorRef.current.contains(selection.anchorNode)) {
+                lastSelectionRange.current = selection.getRangeAt(0);
+            }
         }
     };
 
@@ -84,6 +116,15 @@ export default function TextArea({
         setIsItalic(document.queryCommandState('italic'));
         setIsUnderline(document.queryCommandState('underline'));
         setIsStrike(document.queryCommandState('strikethrough'));
+
+        // Check block format
+        const format = document.queryCommandValue('formatBlock');
+        // formatBlock returns tags like "h3", "p", "div", etc. depending on browser
+        if (format) {
+            setCurrentFormat(format.toLowerCase());
+        } else {
+            setCurrentFormat('p');
+        }
     };
 
     const execCommand = (command: string, value: string | undefined = undefined) => {
@@ -92,13 +133,64 @@ export default function TextArea({
         editorRef.current?.focus();
     };
 
+    const handleFormatChange = (format: string) => {
+        execCommand('formatBlock', format);
+        setCurrentFormat(format);
+        setIsFormatMenuOpen(false);
+    };
+
+    const handleInsertTag = (tagValue: string) => {
+        const uniqueId = `tag-${Date.now()}`;
+        // Tag HTML structure matching Tags component (neutral variant, md size)
+        // using inline-flex and other tailwind classes
+        const tagHtml = `\u00A0<span id="${uniqueId}" contenteditable="false" class="inline-flex items-center justify-center h-[18px] px-2 rounded-[2px] text-[11px] font-medium bg-surface-info text-info mx-0.5 select-none align-middle w-max">${tagValue}</span>\u00A0`;
+
+        // Restore selection
+        if (lastSelectionRange.current) {
+            const selection = window.getSelection();
+            selection?.removeAllRanges();
+            selection?.addRange(lastSelectionRange.current);
+        } else {
+            editorRef.current?.focus();
+        }
+
+        document.execCommand('insertHTML', false, tagHtml);
+
+        setTimeout(() => {
+            const insertedTag = document.getElementById(uniqueId);
+            if (insertedTag) {
+                insertedTag.removeAttribute('id');
+
+                const selection = window.getSelection();
+                const range = document.createRange();
+
+                if (insertedTag.nextSibling) {
+                    try {
+                        range.setStart(insertedTag.nextSibling, 1);
+                        range.collapse(true);
+                    } catch (e) {
+                        range.setStartAfter(insertedTag);
+                        range.collapse(true);
+                    }
+                } else {
+                    range.setStartAfter(insertedTag);
+                    range.collapse(true);
+                }
+
+                selection?.removeAllRanges();
+                selection?.addRange(range);
+            }
+            editorRef.current?.focus();
+        }, 0);
+
+        handleInput(); // Trigger onChange
+        setIsTagMenuOpen(false);
+    };
+
     const handleLink = () => {
         const url = prompt("Insira a URL:");
         if (url) {
             execCommand('createLink', url);
-            // Apply custom link styles (underline + color info)
-            // Note: document.execCommand('createLink') creates a standard <a>.
-            // We rely on CSS to style these <a> tags inside the editor.
         }
     };
 
@@ -113,6 +205,8 @@ export default function TextArea({
             execCommand('createLink', text.trim());
         }
     };
+
+    const formatLabel = currentFormat === 'h3' ? 'Título' : 'Corpo';
 
     return (
         <div className="flex flex-col gap-1 w-full relative">
@@ -129,39 +223,79 @@ export default function TextArea({
                     ? "border-alert bg-surface-default focus-within:ring-2 focus-within:ring-red-100 focus-within:border-alert-600"
                     : disabled
                         ? "border-outline-default bg-surface-dark pointer-events-none opacity-60"
-                        : "border-outline-default bg-surface-default hover:border-outline-dark focus-within:ring-2 focus-within:ring-brand-200 focus-within:border-brand-500",
+                        : "border-outline-default bg-surface-default hover:border-outline-dark",
                 className
             )}>
 
                 {/* 1. Toolbar (Optional) */}
                 {showToolbar && !disabled && (
-                    <div className="flex flex-wrap items-center gap-2 p-2 border-b border-outline-default">
+                    <div className="flex flex-wrap items-center gap-2 p-2 border-b border-outline-default z-20 relative">
 
-                        {/* Title Select (Using Dropdown Component) */}
+                        {/* Title Select (Using Dropdown Component as Trigger) */}
                         {showTitleSelect && (
-                            <div className="w-[107px]">
+                            <div className="relative w-[120px]">
                                 <Dropdown
                                     size="md"
-                                    value="Parágrafo"
-                                    // Actually Dropdown has fixed arrow right. 
-                                    // "Parágrafo" input in Figma has an icon on the left? No, it looks like text + arrow.
-                                    // Let's use Dropdown as intended.
-                                    // The previous Input had `endIcon`. Dropdown has fixed endIcon.
-                                    className="cursor-pointer hover:bg-surface-neutral"
+                                    value={formatLabel}
+                                    onClick={() => setIsFormatMenuOpen(!isFormatMenuOpen)}
+                                    className="cursor-pointer hover:bg-surface-neutral w-full bg-white"
                                     fullWidth
                                 />
+
+                                <AnimatePresence>
+                                    {isFormatMenuOpen && (
+                                        <>
+                                            <div
+                                                className="fixed inset-0 z-10"
+                                                onClick={() => setIsFormatMenuOpen(false)}
+                                            />
+                                            <div className="absolute top-full left-0 mt-1 w-full z-20">
+                                                <DropdownMenu
+                                                    options={[
+                                                        { value: 'h3', label: 'Título' },
+                                                        { value: 'p', label: 'Corpo' }
+                                                    ]}
+                                                    value={currentFormat}
+                                                    onChange={(val) => handleFormatChange(val as string)}
+                                                    searchable={false}
+                                                    className="shadow-lg"
+                                                />
+                                            </div>
+                                        </>
+                                    )}
+                                </AnimatePresence>
                             </div>
                         )}
 
                         {/* Tags Select (Using Dropdown Component) */}
                         {showTagSelect && (
-                            <div className="w-[115px]">
+                            <div className="relative w-[115px]">
                                 <Dropdown
                                     size="md"
-                                    value="Tags"
-                                    className="cursor-pointer hover:bg-surface-neutral"
+                                    value="Variáveis"
+                                    onClick={() => setIsTagMenuOpen(!isTagMenuOpen)}
+                                    className="cursor-pointer hover:bg-surface-neutral w-full bg-white"
                                     fullWidth
                                 />
+
+                                <AnimatePresence>
+                                    {isTagMenuOpen && (
+                                        <>
+                                            <div
+                                                className="fixed inset-0 z-10"
+                                                onClick={() => setIsTagMenuOpen(false)}
+                                            />
+                                            <div className="absolute top-full left-0 mt-1 w-full z-20">
+                                                <DropdownMenu
+                                                    options={tagOptions}
+                                                    onChange={(val) => handleInsertTag(val as string)}
+                                                    searchable={false}
+                                                    className="shadow-lg"
+                                                />
+                                            </div>
+                                        </>
+                                    )}
+                                </AnimatePresence>
                             </div>
                         )}
 
@@ -180,6 +314,7 @@ export default function TextArea({
                                         "w-5 h-5 flex items-center justify-center rounded-[4px] transition-colors",
                                         isBold ? "text-brand-600 bg-surface-brand" : "text-gray-500 hover:bg-surface-neutral"
                                     )}
+                                    title="Negrito"
                                 >
                                     <FormatBold sx={{ fontSize: 14 }} />
                                 </button>
@@ -191,6 +326,7 @@ export default function TextArea({
                                         "w-5 h-5 flex items-center justify-center rounded-[4px] transition-colors",
                                         isItalic ? "text-brand-600 bg-surface-brand" : "text-gray-500 hover:bg-surface-neutral"
                                     )}
+                                    title="Itálico"
                                 >
                                     <FormatItalic sx={{ fontSize: 14 }} />
                                 </button>
@@ -202,6 +338,7 @@ export default function TextArea({
                                         "w-5 h-5 flex items-center justify-center rounded-[4px] transition-colors",
                                         isUnderline ? "text-brand-600 bg-surface-brand" : "text-gray-500 hover:bg-surface-neutral"
                                     )}
+                                    title="Sublinhado"
                                 >
                                     <FormatUnderlined sx={{ fontSize: 14 }} />
                                 </button>
@@ -213,6 +350,7 @@ export default function TextArea({
                                         "w-5 h-5 flex items-center justify-center rounded-[4px] transition-colors",
                                         isStrike ? "text-brand-600 bg-surface-brand" : "text-gray-500 hover:bg-surface-neutral"
                                     )}
+                                    title="Tachado"
                                 >
                                     <StrikethroughS sx={{ fontSize: 14 }} />
                                 </button>
@@ -223,6 +361,7 @@ export default function TextArea({
                                     type="button"
                                     onClick={() => execCommand('insertUnorderedList')}
                                     className="w-5 h-5 flex items-center justify-center rounded-[4px] transition-colors text-gray-500 hover:bg-surface-neutral"
+                                    title="Lista não ordenada"
                                 >
                                     <FormatListBulleted sx={{ fontSize: 14 }} />
                                 </button>
@@ -230,6 +369,7 @@ export default function TextArea({
                                     type="button"
                                     onClick={() => execCommand('insertOrderedList')}
                                     className="w-5 h-5 flex items-center justify-center rounded-[4px] transition-colors text-gray-500 hover:bg-surface-neutral"
+                                    title="Lista ordenada"
                                 >
                                     <FormatListNumbered sx={{ fontSize: 14 }} />
                                 </button>
@@ -244,6 +384,7 @@ export default function TextArea({
                                     type="button"
                                     onClick={handleLink}
                                     className="w-5 h-5 flex items-center justify-center rounded-[4px] transition-colors text-gray-500 hover:bg-surface-neutral"
+                                    title="Inserir link"
                                 >
                                     <InsertLink sx={{ fontSize: 14 }} />
                                 </button>
@@ -253,7 +394,7 @@ export default function TextArea({
                 )}
 
                 {/* 2. Text Input Area */}
-                <div className="relative w-full">
+                <div className="relative w-full z-0">
                     {!hasContent && (
                         <div className="absolute top-3 left-3 text-xs text-gray-400 pointer-events-none font-sans">
                             {placeholder}
@@ -263,11 +404,16 @@ export default function TextArea({
                         ref={editorRef}
                         contentEditable={!disabled}
                         onInput={handleInput}
-                        onKeyUp={checkActiveFormats}
-                        onMouseUp={checkActiveFormats}
+                        onKeyUp={() => { checkActiveFormats(); saveSelection(); }}
+                        onMouseUp={() => { checkActiveFormats(); saveSelection(); }}
+                        onBlur={saveSelection}
                         onPaste={handlePaste}
                         className={clsx(
-                            "w-full min-h-[120px] p-3 text-xs text-gray-800 bg-transparent outline-none resize-y font-sans rich-text-editor",
+                            "w-full min-h-[120px] p-3 text-xs text-gray-800 bg-transparent outline-none resize-y overflow-auto font-sans rich-text-editor",
+                            "[&>h3]:text-sm [&>h3]:font-bold [&>h3]:mb-1 [&>h3]:block", // Style for H3 (Title)
+                            "[&>p]:text-xs [&>p]:mb-1 [&>p]:block",                     // Style for P (Body)
+                            "[&>ul]:list-disc [&>ul]:ml-4 [&>ul]:mb-2",                 // Lists
+                            "[&>ol]:list-decimal [&>ol]:ml-4 [&>ol]:mb-2",              // Lists
                             disabled && "text-gray-400 cursor-not-allowed resize-none"
                         )}
                         style={{ whiteSpace: 'pre-wrap' }}
@@ -279,7 +425,6 @@ export default function TextArea({
                 {showActions && !disabled && (
                     <div className="flex items-center justify-between p-2 border-t border-outline-default">
                         <div className="flex gap-2">
-                            {/* Potential Left actions or status */}
                         </div>
                         <div className="flex gap-2">
                             <Button
