@@ -112,13 +112,17 @@ export default function TextArea({
     };
 
     const checkActiveFormats = () => {
-        setIsBold(document.queryCommandState('bold'));
-        setIsItalic(document.queryCommandState('italic'));
-        setIsUnderline(document.queryCommandState('underline'));
-        setIsStrike(document.queryCommandState('strikethrough'));
+        // Using 'any' cast to suppress deprecation warnings for queryCommandState/Value
+        // These APIs are deprecated but remain the standard for lightweight contentEditable interactions
+        const doc = document as any;
+
+        setIsBold(doc.queryCommandState('bold'));
+        setIsItalic(doc.queryCommandState('italic'));
+        setIsUnderline(doc.queryCommandState('underline'));
+        setIsStrike(doc.queryCommandState('strikethrough'));
 
         // Check block format
-        const format = document.queryCommandValue('formatBlock');
+        const format = doc.queryCommandValue('formatBlock');
         // formatBlock returns tags like "h3", "p", "div", etc. depending on browser
         if (format) {
             setCurrentFormat(format.toLowerCase());

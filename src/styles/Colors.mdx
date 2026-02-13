@@ -1,0 +1,239 @@
+import { Meta, ColorPalette, ColorItem } from '@storybook/addon-docs/blocks';
+
+<Meta title="Tokens/Cores" />
+
+# Cores
+O Beyond System Project utiliza uma paleta de cores curada para manter uma identidade de marca consistente. Essas cores são definidas como Variáveis CSS nos estilos globais.
+
+## Paletas Base
+
+<ColorPalette>
+  <ColorItem
+    title="Cinza (Neutro)"
+    subtitle="Tons neutros para texto, bordas e fundos"
+    colors={{
+      'gray-0': '#ffffff',
+      'gray-50': '#f6f8fa',
+      'gray-100': '#eff1f4',
+      'gray-200': '#d9d9e0',
+      'gray-300': '#cbcdd3',
+      'gray-400': '#94979b',
+      'gray-500': '#696c71',
+      'gray-600': '#4e4f51',
+      'gray-700': '#3c3e42',
+      'gray-800': '#202123',
+      'gray-900': '#131414',
+      'gray-950': '#0f1010',
+    }}
+  />
+  
+  <ColorItem
+    title="Azul (Base da Marca)"
+    subtitle="Paleta de cores primária da marca"
+    colors={{
+      'blue-50': '#ecf1ff',
+      'blue-100': '#c2d3ff',
+      'blue-200': '#98b5ff',
+      'blue-300': '#6e97ff',
+      'blue-400': '#4378ff',
+      'blue-500': '#3264e2',
+      'blue-600': '#2351c5',
+      'blue-700': '#1740a8',
+      'blue-800': '#0d318a',
+      'blue-900': '#06236d',
+      'blue-950': '#011750',
+    }}
+  />
+
+  <ColorItem
+    title="Vermelho (Erro/Alerta)"
+    subtitle="Usado para erros, alertas e ações destrutivas"
+    colors={{
+      'red-50': '#fed5d5',
+      'red-100': '#feabab',
+      'red-200': '#fd8181',
+      'red-300': '#fd5757',
+      'red-400': '#fc2d2d',
+      'red-500': '#fc0303',
+      'red-600': '#d20303',
+      'red-700': '#a80202',
+      'red-800': '#7e0202',
+      'red-900': '#540101',
+      'red-950': '#2a0101',
+    }}
+  />
+
+  <ColorItem
+    title="Amarelo (Aviso)"
+    subtitle="Usado para avisos e estados de atenção"
+    colors={{
+      'yellow-50': '#fffbe5',
+      'yellow-100': '#fff1aa',
+      'yellow-200': '#ffeb80',
+      'yellow-300': '#ffe455',
+      'yellow-400': '#ffdd2b',
+      'yellow-500': '#ffd600',
+      'yellow-600': '#f0b800',
+      'yellow-700': '#c79200',
+      'yellow-800': '#a87300',
+      'yellow-900': '#805500',
+      'yellow-950': '#4d3300',
+    }}
+  />
+
+  <ColorItem
+    title="Verde (Sucesso)"
+    subtitle="Usado para estados de sucesso e confirmações"
+    colors={{
+      'green-50': '#dff7e4',
+      'green-100': '#bfefca',
+      'green-200': '#9fe8af',
+      'green-300': '#7fe095',
+      'green-400': '#60d87a',
+      'green-500': '#40d05f',
+      'green-600': '#2cb64b',
+      'green-700': '#24923c',
+      'green-800': '#1b6d2d',
+      'green-900': '#12491e',
+      'green-950': '#09240f',
+    }}
+  />
+
+  <ColorItem
+    title="Laranja"
+    subtitle="Cor de destaque secundária"
+    colors={{
+      'orange-50': '#ffeee5',
+      'orange-100': '#ffd0b7',
+      'orange-200': '#ffb28a',
+      'orange-300': '#ff945c',
+      'orange-400': '#ff762e',
+      'orange-500': '#f95600',
+      'orange-600': '#d04800',
+      'orange-700': '#a73a00',
+      'orange-800': '#7f2c00',
+      'orange-900': '#561e00',
+      'orange-950': '#2f1000',
+    }}
+  />
+
+  <ColorItem
+    title="Roxo (Especial)"
+    subtitle="Usado para ações ou recursos especiais"
+    colors={{
+      'purple-50': '#f6ecff',
+      'purple-100': '#e6cbff',
+      'purple-200': '#d6a9ff',
+      'purple-300': '#c688ff',
+      'purple-400': '#b667ff',
+      'purple-500': '#a745ff',
+      'purple-600': '#9333ea',
+      'purple-700': '#7821c8',
+      'purple-800': '#6012a6',
+      'purple-900': '#490784',
+      'purple-950': '#330062',
+    }}
+  />
+</ColorPalette>
+
+## Tokens Semânticos
+
+Estes tokens são apelidos para as cores da paleta base, usados para transmitir significado em toda a aplicação.
+
+<ColorPalette>
+  <ColorItem
+    title="Marca"
+    subtitle="Cores primárias da marca (Apelidadas para Azul)"
+    colors={{
+      'brand-50': 'var(--color-blue-50)',
+      'brand-100': 'var(--color-blue-100)',
+      'brand-200': 'var(--color-blue-200)',
+      'brand-300': 'var(--color-blue-300)',
+      'brand-400': 'var(--color-blue-400)',
+      'brand-500': 'var(--color-blue-500)',
+      'brand-600': 'var(--color-blue-600)',
+      'brand-700': 'var(--color-blue-700)',
+      'brand-800': 'var(--color-blue-800)',
+      'brand-900': 'var(--color-blue-900)',
+    }}
+  />
+
+  <ColorItem
+    title="Cores de Status"
+    subtitle="Indicadores semânticos de status"
+    colors={{
+      'Success': 'var(--color-green-700)',
+      'Success (Hover)': 'var(--color-green-800)',
+      'Warning': 'var(--color-yellow-700)',
+      'Warning (Hover)': 'var(--color-yellow-800)',
+      'Alert': 'var(--color-red-500)',
+      'Alert (Hover)': 'var(--color-red-600)',
+      'Info': 'var(--color-blue-400)',
+      'Info (Hover)': 'var(--color-blue-500)',
+      'Special': 'var(--color-purple-500)',
+      'Special (Hover)': 'var(--color-purple-600)',
+    }}
+  />
+
+  <ColorItem
+    title="Cores de Texto"
+    subtitle="Cores de texto padrão para diferentes contextos"
+    colors={{
+      'Default': 'var(--color-gray-800)',
+      'Body': 'var(--color-gray-500)',
+      'Muted': 'var(--color-gray-400)',
+      'Disabled': 'var(--color-gray-300)',
+      'Inverted': 'var(--color-gray-0)',
+    }}
+  />
+
+  <ColorItem
+    title="Cores de Superfície"
+    subtitle="Cores de fundo para componentes e contêineres"
+    colors={{
+      'Default': 'var(--color-gray-0)',
+      'Dark': 'var(--color-gray-50)',
+      'Darker': 'var(--color-gray-100)',
+      'Neutral': 'var(--color-gray-100)',
+      'Inverted': 'var(--color-gray-800)',
+      'Brand Surface': 'var(--color-blue-50)',
+      'Success Surface': 'var(--color-green-50)',
+      'Warning Surface': 'var(--color-yellow-50)',
+      'Alert Surface': 'var(--color-red-50)',
+      'Info Surface': 'var(--color-blue-50)',
+      'Special Surface': 'var(--color-purple-50)',
+    }}
+  />
+
+  <ColorItem
+    title="Cores de Contorno"
+    subtitle="Cores de borda para componentes"
+    colors={{
+      'Default': 'var(--color-gray-200)',
+      'Dark': 'var(--color-gray-300)',
+    }}
+  />
+</ColorPalette>
+
+## Cores para Visualização de Dados
+
+Um conjunto específico de cores projetado para gráficos e representação de dados.
+
+<ColorPalette>
+  <ColorItem
+    title="Data Viz"
+    subtitle="Para gráficos e diagramas"
+    colors={{
+      'data-orange': 'var(--color-orange-300)',
+      'data-black': 'var(--color-gray-700)',
+      'data-green': 'var(--color-green-600)',
+      'data-light-blue': 'var(--color-blue-200)',
+      'data-blue': 'var(--color-blue-600)',
+      'data-yellow': 'var(--color-yellow-500)',
+      'data-purple': 'var(--color-purple-400)',
+      'data-gray': 'var(--color-gray-300)',
+      'data-red': 'var(--color-red-400)',
+      'data-light-red': 'var(--color-red-100)',
+    }}
+  />
+</ColorPalette>
