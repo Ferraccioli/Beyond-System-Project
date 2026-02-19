@@ -10,6 +10,7 @@ export interface MenuItemProps {
     onClick?: () => void;
     type?: "checkbox" | "radio" | "none";
     className?: string;
+    highlighted?: boolean;
 }
 
 /**
@@ -28,6 +29,7 @@ export default function MenuItem({
     onClick,
     type = "none",
     className,
+    highlighted = false,
 }: MenuItemProps) {
     return (
         <div
@@ -36,8 +38,9 @@ export default function MenuItem({
                 "flex items-center gap-3 px-3 py-2 relative transition-colors duration-200 select-none",
                 disabled ? "cursor-not-allowed opacity-40" : "cursor-pointer",
                 !disabled && !selected && "hover:bg-surface-dark",
-                selected && "bg-surface-dark",
-                !disabled && selected && "hover:bg-surface-darker",
+                !disabled && !selected && highlighted && "bg-surface-dark",
+                selected && "bg-surface-brand",
+                !disabled && selected && "hover:bg-brand-100",
                 className
             )}
             style={{
@@ -70,29 +73,26 @@ export default function MenuItem({
             <div className="flex flex-col flex-1 min-w-0">
                 <span
                     className={clsx(
-                        "text-xs font-sans font-medium truncate",
+                        "text-xs font-sans font-medium",
                         disabled ? "text-disabled" : "text-default"
                     )}
                     style={{
                         fontSize: '12px',
                         fontWeight: 500,
-                        color: disabled ? '#cbcdd3' : '#202123',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap'
+                        color: disabled ? '#cbcdd3' : (selected ? 'var(--color-brand-600)' : '#202123'),
                     }}
                 >
                     {label}
                 </span>
                 {description && (
                     <span
-                        className="text-[10px] text-muted truncate"
+                        className={clsx(
+                            "text-[10px]",
+                            disabled ? "text-disabled" : (selected ? "text-brand-600" : "text-body")
+                        )}
                         style={{
                             fontSize: '10px',
-                            color: '#94979b',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap'
+                            color: disabled ? '#cbcdd3' : (selected ? 'var(--color-brand-600)' : 'var(--color-body)'),
                         }}
                     >
                         {description}

@@ -60,7 +60,7 @@ export default function Dropdown({
                     )}
 
                     <span className={clsx(
-                        "whitespace-nowrap h-full bg-transparent outline-none text-default font-sans",
+                        "whitespace-nowrap h-full bg-transparent outline-none text-default font-medium font-sans",
                         !value ? "text-gray-400" : "text-gray-800",
                         size === "md" ? "text-xs" : "text-sm"
                     )}>

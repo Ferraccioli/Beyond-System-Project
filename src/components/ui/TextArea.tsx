@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import clsx from "clsx";
 import {
     FormatBold,
@@ -60,6 +61,8 @@ export default function TextArea({
     const [isItalic, setIsItalic] = useState(false);
     const [isUnderline, setIsUnderline] = useState(false);
     const [isStrike, setIsStrike] = useState(false);
+    const [isUnorderedList, setIsUnorderedList] = useState(false);
+    const [isOrderedList, setIsOrderedList] = useState(false);
 
 
     const [hasContent, setHasContent] = useState(value !== "");
@@ -73,6 +76,10 @@ export default function TextArea({
 
     // Tags Dropdown State
     const [isTagMenuOpen, setIsTagMenuOpen] = useState(false);
+
+    const [menuPosition, setMenuPosition] = useState<{ top: number; left: number } | null>(null);
+    const [tagSearch, setTagSearch] = useState("");
+    const [highlightedIndex, setHighlightedIndex] = useState(0);
 
     const tagOptions = [
         { value: '{{nomedocliente}}', label: 'Nome do Cliente' },
@@ -95,9 +102,240 @@ export default function TextArea({
             const textContent = editorRef.current.textContent || "";
             // Check if it's truly empty (sometimes innerHTML is <br>)
             setHasContent(textContent.trim() !== "" || (content !== "" && content !== "<br>"));
-            onChange?.(content);
+
+            // Auto-convert tags logic
+            let shouldKeepMenuOpen = false;
+
+            const selection = window.getSelection();
+            if (selection && selection.rangeCount > 0 && selection.isCollapsed) {
+                const range = selection.getRangeAt(0);
+                const node = range.startContainer;
+
+                // Check if we are typing inside a text node
+                if (node.nodeType === Node.TEXT_NODE && node.textContent) {
+                    const text = node.textContent;
+                    const cursorOffset = range.startOffset;
+
+                    // Find the last '{{' occurrence before the cursor
+                    const lastOpenBracesIndex = text.lastIndexOf('{{', cursorOffset);
+
+                    if (lastOpenBracesIndex !== -1) {
+                        const potentialTag = text.slice(lastOpenBracesIndex, cursorOffset);
+                        // Check for spaces
+                        if (!potentialTag.includes(' ') && !potentialTag.includes('}')) {
+                            // We have a match/potential match
+                            setTagSearch(potentialTag);
+
+                            // Check if there are options that match
+                            const hasMatch = tagOptions.some(opt =>
+                                opt.value.toLowerCase().startsWith(potentialTag.toLowerCase())
+                            );
+
+                            if (hasMatch) {
+                                shouldKeepMenuOpen = true;
+
+                                // If menu is not open, open it and set position
+                                if (!isTagMenuOpen) {
+                                    const rangeClone = range.cloneRange();
+                                    rangeClone.setStart(node, lastOpenBracesIndex);
+                                    rangeClone.setEnd(node, lastOpenBracesIndex + 2); // Select '{{'
+                                    const rect = rangeClone.getBoundingClientRect();
+
+                                    setMenuPosition({
+                                        top: rect.bottom + 5,
+                                        left: rect.left
+                                    });
+                                    setIsTagMenuOpen(true);
+                                    // Set index to 0 when opening
+                                    setHighlightedIndex(0);
+                                    saveSelection();
+                                }
+                            }
+                        }
+                    }
+
+                    // Simple approach: look for the last word appearing before cursor
+                    const textBeforeCursor = text.slice(0, cursorOffset);
+
+                    // Match {{value}} followed by a space
+                    if (textBeforeCursor.endsWith(' ')) {
+                        // Regex to capture the tag before the space. 
+                        const match = textBeforeCursor.match(/(\{\{.*?\}\})\s$/);
+
+                        if (match) {
+                            const params = {
+                                tagKey: match[1],
+                                fullMatch: match[0],
+                                startIndex: cursorOffset - match[0].length
+                            };
+
+                            // Check if it matches a valid tag option
+                            const isValidTag = tagOptions.some(opt => opt.value === params.tagKey);
+
+                            if (isValidTag) {
+                                // We found a match. Now we need to replace the text with a tag.
+                                // We need to split the text node.
+
+                                // 1. Text before the tag
+                                const beforeText = text.slice(0, params.startIndex);
+                                // 2. Text after the cursor (if any)
+                                const afterText = text.slice(cursorOffset);
+
+                                // Create the tag element
+                                const uniqueId = `tag-${Date.now()}`;
+                                const span = document.createElement('span');
+                                span.id = uniqueId;
+                                span.contentEditable = "false";
+                                span.className = "inline-flex items-center justify-center h-[18px] px-2 rounded-[2px] text-[11px] font-medium bg-surface-info text-info mx-0.5 select-none align-middle w-max";
+                                span.textContent = params.tagKey;
+
+                                // Reconstruct the structure
+                                const parent = node.parentNode;
+                                if (parent) {
+                                    // Create text node for before content if it exists
+                                    if (beforeText) {
+                                        parent.insertBefore(document.createTextNode(beforeText), node);
+                                    }
+
+                                    // Insert the tag
+                                    parent.insertBefore(document.createTextNode('\u00A0'), node); // Space before
+                                    parent.insertBefore(span, node);
+                                    const afterSpace = document.createTextNode('\u00A0');
+                                    parent.insertBefore(afterSpace, node);
+
+                                    // Insert after text if exists
+                                    if (afterText) {
+                                        parent.insertBefore(document.createTextNode(afterText), node);
+                                    }
+
+                                    // Remove original node
+                                    parent.removeChild(node);
+
+                                    // Restore cursor position: after the 'afterSpace'
+                                    const newRange = document.createRange();
+                                    newRange.setStart(afterSpace, 1);
+                                    newRange.collapse(true);
+                                    selection.removeAllRanges();
+                                    selection.addRange(newRange);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (isTagMenuOpen && !shouldKeepMenuOpen) {
+                setIsTagMenuOpen(false);
+                setMenuPosition(null);
+            }
+
+            onChange?.(editorRef.current.innerHTML);
             checkActiveFormats();
             saveSelection();
+        }
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+        if (isTagMenuOpen) {
+            const filteredOptions = tagOptions.filter(opt =>
+                opt.value.toLowerCase().startsWith(tagSearch.toLowerCase())
+            );
+
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                setHighlightedIndex(prev => Math.min(prev + 1, filteredOptions.length - 1));
+                return;
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                setHighlightedIndex(prev => Math.max(prev - 1, 0));
+                return;
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                if (filteredOptions[highlightedIndex]) {
+                    handleInsertTag(filteredOptions[highlightedIndex].value);
+                }
+                return;
+            } else if (e.key === 'Escape') {
+                e.preventDefault();
+                setIsTagMenuOpen(false);
+                setMenuPosition(null);
+                return;
+            }
+        }
+
+        if (e.key === 'Backspace') {
+            const selection = window.getSelection();
+            if (selection && selection.rangeCount > 0) {
+                const range = selection.getRangeAt(0);
+
+                if (range.collapsed) {
+                    const startNode = range.startContainer;
+                    // If cursor is in a text node
+                    if (startNode.nodeType === Node.TEXT_NODE) {
+                        // Check if we are at the beginning of this text node
+                        if (range.startOffset === 0) {
+                            const previousSibling = startNode.previousSibling;
+                            if (previousSibling && previousSibling.nodeType === Node.ELEMENT_NODE && (previousSibling as HTMLElement).classList.contains("bg-surface-info")) {
+                                e.preventDefault();
+                                replaceTagWithText(previousSibling as HTMLElement, true);
+                            }
+                        } else if (range.startOffset === 1 && startNode.textContent === '\u00A0') {
+                            // Accessing previous sibling of the text node containing the space
+                            const previousSibling = startNode.previousSibling;
+                            if (previousSibling && previousSibling.nodeType === Node.ELEMENT_NODE && (previousSibling as HTMLElement).classList.contains("bg-surface-info")) {
+                                e.preventDefault();
+                                replaceTagWithText(previousSibling as HTMLElement, true);
+                            }
+                        }
+                    } else if (startNode.nodeType === Node.ELEMENT_NODE) {
+                        // Cursor might be strictly between elements in the parent
+                        const nodeBefore = startNode.childNodes[range.startOffset - 1];
+                        if (nodeBefore && nodeBefore.nodeType === Node.ELEMENT_NODE && (nodeBefore as HTMLElement).classList.contains("bg-surface-info")) {
+                            e.preventDefault();
+                            replaceTagWithText(nodeBefore as HTMLElement, true);
+                        }
+                    }
+                }
+            }
+        }
+    };
+
+    const replaceTagWithText = (tagElement: HTMLElement, openMenu: boolean = false) => {
+        const text = tagElement.textContent || "";
+        const parent = tagElement.parentNode;
+        if (parent) {
+            const textNode = document.createTextNode(text);
+            parent.replaceChild(textNode, tagElement);
+
+            // Place cursor at end of new text node
+            const selection = window.getSelection();
+            const range = document.createRange();
+            range.setStart(textNode, textNode.length);
+            range.collapse(true);
+            selection?.removeAllRanges();
+            selection?.addRange(range);
+
+            handleInput(); // Trigger state update
+
+            if (openMenu) {
+                // Determine position for menu
+                // We assume tag starts with '{'
+                const braceIndex = text.lastIndexOf('{');
+                if (braceIndex !== -1) {
+                    const range = document.createRange();
+                    range.setStart(textNode, braceIndex);
+                    range.setEnd(textNode, braceIndex + 1); // Select the brace
+                    const rect = range.getBoundingClientRect();
+
+                    setMenuPosition({
+                        top: rect.bottom + 5,
+                        left: rect.left
+                    });
+                    setTagSearch(text);
+                    setIsTagMenuOpen(true);
+                    setHighlightedIndex(0);
+                }
+            }
         }
     };
 
@@ -120,6 +358,8 @@ export default function TextArea({
         setIsItalic(doc.queryCommandState('italic'));
         setIsUnderline(doc.queryCommandState('underline'));
         setIsStrike(doc.queryCommandState('strikethrough'));
+        setIsUnorderedList(doc.queryCommandState('insertUnorderedList'));
+        setIsOrderedList(doc.queryCommandState('insertOrderedList'));
 
         // Check block format
         const format = doc.queryCommandValue('formatBlock');
@@ -144,19 +384,36 @@ export default function TextArea({
     };
 
     const handleInsertTag = (tagValue: string) => {
+        restoreSelection();
+
+        // Logic to remove preceding tag text (e.g. {{tag or {{foo) if it exists
+        const selection = window.getSelection();
+        if (selection && selection.rangeCount > 0 && selection.isCollapsed) {
+            const range = selection.getRangeAt(0);
+            const node = range.startContainer;
+            if (node.nodeType === Node.TEXT_NODE && node.textContent) {
+                const offset = range.startOffset;
+                const text = node.textContent;
+
+                // Find the last '{{' before the cursor
+                const lastOpenBracesIndex = text.lastIndexOf('{{', offset);
+
+                if (lastOpenBracesIndex !== -1) {
+                    const potentialTag = text.slice(lastOpenBracesIndex, offset);
+                    if (!potentialTag.includes(' ')) {
+                        // Adjust range to encompass the '{{' and the text following it
+                        range.setStart(node, lastOpenBracesIndex);
+                        range.setEnd(node, offset);
+                        range.deleteContents();
+                    }
+                }
+            }
+        }
+
         const uniqueId = `tag-${Date.now()}`;
         // Tag HTML structure matching Tags component (neutral variant, md size)
         // using inline-flex and other tailwind classes
         const tagHtml = `\u00A0<span id="${uniqueId}" contenteditable="false" class="inline-flex items-center justify-center h-[18px] px-2 rounded-[2px] text-[11px] font-medium bg-surface-info text-info mx-0.5 select-none align-middle w-max">${tagValue}</span>\u00A0`;
-
-        // Restore selection
-        if (lastSelectionRange.current) {
-            const selection = window.getSelection();
-            selection?.removeAllRanges();
-            selection?.addRange(lastSelectionRange.current);
-        } else {
-            editorRef.current?.focus();
-        }
 
         document.execCommand('insertHTML', false, tagHtml);
 
@@ -189,6 +446,16 @@ export default function TextArea({
 
         handleInput(); // Trigger onChange
         setIsTagMenuOpen(false);
+    };
+
+    const restoreSelection = () => {
+        if (lastSelectionRange.current) {
+            const selection = window.getSelection();
+            selection?.removeAllRanges();
+            selection?.addRange(lastSelectionRange.current);
+        } else {
+            editorRef.current?.focus();
+        }
     };
 
     const handleLink = () => {
@@ -277,29 +544,68 @@ export default function TextArea({
                                 <Dropdown
                                     size="md"
                                     value="Variáveis"
-                                    onClick={() => setIsTagMenuOpen(!isTagMenuOpen)}
+                                    onClick={() => {
+                                        setIsTagMenuOpen(!isTagMenuOpen);
+                                        setMenuPosition(null);
+                                        setTagSearch("");
+                                        setHighlightedIndex(0);
+                                    }}
                                     className="cursor-pointer hover:bg-surface-neutral w-full bg-white"
                                     fullWidth
                                 />
 
-                                <AnimatePresence>
-                                    {isTagMenuOpen && (
-                                        <>
+                                {isTagMenuOpen && (
+                                    menuPosition ? createPortal(
+                                        <div
+                                            className="fixed inset-0"
+                                            style={{ zIndex: 9998 }}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setIsTagMenuOpen(false);
+                                            }}
+                                        />,
+                                        document.body
+                                    ) : null
+                                )}
+                                {isTagMenuOpen && (
+                                    menuPosition ? createPortal(
+                                        <div
+                                            className="fixed w-[200px]"
+                                            style={{
+                                                top: `${menuPosition.top}px`,
+                                                left: `${menuPosition.left}px`,
+                                                zIndex: 9999
+                                            }}
+                                        >
+                                            <DropdownMenu
+                                                options={tagOptions.filter(opt =>
+                                                    opt.value.toLowerCase().startsWith(tagSearch.toLowerCase())
+                                                )}
+                                                highlightedIndex={highlightedIndex}
+                                                onChange={(val) => handleInsertTag(val as string)}
+                                                searchable={false}
+                                                className="shadow-xl border border-gray-200"
+                                            />
+                                        </div>,
+                                        document.body
+                                    ) : (
+                                        <div className="absolute top-full left-0 mt-1 w-full z-20">
                                             <div
                                                 className="fixed inset-0 z-10"
                                                 onClick={() => setIsTagMenuOpen(false)}
                                             />
-                                            <div className="absolute top-full left-0 mt-1 w-full z-20">
-                                                <DropdownMenu
-                                                    options={tagOptions}
-                                                    onChange={(val) => handleInsertTag(val as string)}
-                                                    searchable={false}
-                                                    className="shadow-lg"
-                                                />
-                                            </div>
-                                        </>
-                                    )}
-                                </AnimatePresence>
+                                            <DropdownMenu
+                                                options={tagOptions.filter(opt =>
+                                                    opt.value.toLowerCase().startsWith(tagSearch.toLowerCase())
+                                                )}
+                                                highlightedIndex={highlightedIndex}
+                                                onChange={(val) => handleInsertTag(val as string)}
+                                                searchable={false}
+                                                className="shadow-lg relative z-20"
+                                            />
+                                        </div>
+                                    )
+                                )}
                             </div>
                         )}
 
@@ -364,7 +670,10 @@ export default function TextArea({
                                 <button
                                     type="button"
                                     onClick={() => execCommand('insertUnorderedList')}
-                                    className="w-5 h-5 flex items-center justify-center rounded-[4px] transition-colors text-gray-500 hover:bg-surface-neutral"
+                                    className={clsx(
+                                        "w-5 h-5 flex items-center justify-center rounded-[4px] transition-colors",
+                                        isUnorderedList ? "text-brand-600 bg-surface-brand" : "text-gray-500 hover:bg-surface-neutral"
+                                    )}
                                     title="Lista não ordenada"
                                 >
                                     <FormatListBulleted sx={{ fontSize: 14 }} />
@@ -372,7 +681,10 @@ export default function TextArea({
                                 <button
                                     type="button"
                                     onClick={() => execCommand('insertOrderedList')}
-                                    className="w-5 h-5 flex items-center justify-center rounded-[4px] transition-colors text-gray-500 hover:bg-surface-neutral"
+                                    className={clsx(
+                                        "w-5 h-5 flex items-center justify-center rounded-[4px] transition-colors",
+                                        isOrderedList ? "text-brand-600 bg-surface-brand" : "text-gray-500 hover:bg-surface-neutral"
+                                    )}
                                     title="Lista ordenada"
                                 >
                                     <FormatListNumbered sx={{ fontSize: 14 }} />
@@ -408,6 +720,7 @@ export default function TextArea({
                         ref={editorRef}
                         contentEditable={!disabled}
                         onInput={handleInput}
+                        onKeyDown={handleKeyDown}
                         onKeyUp={() => { checkActiveFormats(); saveSelection(); }}
                         onMouseUp={() => { checkActiveFormats(); saveSelection(); }}
                         onBlur={saveSelection}

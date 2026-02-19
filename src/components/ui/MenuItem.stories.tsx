@@ -38,6 +38,15 @@ export const WithDescription: Story = {
     },
 };
 
+export const SelectedWithDescription: Story = {
+    args: {
+        label: 'Selected Item',
+        description: 'This is a description for the selected item',
+        type: 'none',
+        selected: true,
+    },
+};
+
 export const WithCheckbox: Story = {
     args: {
         label: 'Checkbox Item',
@@ -87,27 +96,35 @@ export const DisabledSelected: Story = {
     },
 };
 
-export const LongText: Story = {
+export const TextWrapping: Story = {
     args: {
-        label: 'This is a very long menu item label that should truncate with ellipsis',
-        description: 'And this is an even longer description that will also truncate when it exceeds the available space',
+        label: 'This is a very long menu item label that should wrap to the next line instead of truncating',
+        description: 'And this is an even longer description that will also wrap to multiple lines when it exceeds the available space',
         type: 'checkbox',
     },
 };
 
 export const MenuList: Story = {
+    args: {
+        label: 'Menu List',
+        type: 'none',
+    },
     render: () => (
         <div className="w-64 bg-white border border-outline-default rounded-md overflow-hidden shadow-sm">
-            <MenuItem label="First Item" type="none" />
+            <MenuItem label="First Item" description="Description for first item" type="none" />
             <MenuItem label="Second Item" type="none" />
-            <MenuItem label="Third Item" type="none" selected />
+            <MenuItem label="Third Item" description="Selected with description" type="none" selected />
             <MenuItem label="Fourth Item" type="none" />
-            <MenuItem label="Disabled Item" type="none" disabled />
+            <MenuItem label="Disabled Item" description="Disabled description" type="none" disabled />
         </div>
     ),
 };
 
 export const CheckboxList: Story = {
+    args: {
+        label: 'Checkbox List',
+        type: 'checkbox',
+    },
     render: () => (
         <div className="w-64 bg-white border border-outline-default rounded-md overflow-hidden shadow-sm">
             <MenuItem label="Option 1" type="checkbox" />
@@ -120,6 +137,10 @@ export const CheckboxList: Story = {
 };
 
 export const RadioList: Story = {
+    args: {
+        label: 'Radio List',
+        type: 'radio',
+    },
     render: () => (
         <div className="w-64 bg-white border border-outline-default rounded-md overflow-hidden shadow-sm">
             <MenuItem label="Option 1" type="radio" />

@@ -28,6 +28,7 @@ export interface DropdownMenuProps {
     maxHeight?: number;
     className?: string;
     onSearch?: (query: string) => void;
+    highlightedIndex?: number;
 }
 
 
@@ -43,6 +44,7 @@ export default function DropdownMenu({
     maxHeight = 280,
     className,
     onSearch,
+    highlightedIndex = -1,
 }: DropdownMenuProps) {
     const [searchQuery, setSearchQuery] = useState("");
 
@@ -79,7 +81,7 @@ export default function DropdownMenu({
         );
     };
 
-    const renderOption = (option: DropdownOption) => {
+    const renderOption = (option: DropdownOption, index: number) => {
         return (
             <MenuItem
                 key={option.value}
@@ -89,13 +91,14 @@ export default function DropdownMenu({
                 disabled={option.disabled}
                 type={multiple ? "checkbox" : "none"}
                 onClick={() => !option.disabled && handleOptionClick(option.value)}
+                highlighted={index === highlightedIndex}
             />
         );
     };
 
     const renderOptions = (opts: DropdownOption[]) => {
         const filtered = filterOptions(opts);
-        return filtered.map(renderOption);
+        return filtered.map((opt, index) => renderOption(opt, index));
     };
 
     const renderSections = () => {
@@ -118,7 +121,7 @@ export default function DropdownMenu({
                     >
                         {section.title}
                     </div>
-                    {filtered.map(renderOption)}
+                    {filtered.map((opt, i) => renderOption(opt, i))}
                 </div>
             );
         });
@@ -141,7 +144,9 @@ export default function DropdownMenu({
                 boxShadow: '0px 1px 2px -1px rgba(0, 0, 0, 0.1), 0px 1px 3px 0px rgba(0, 0, 0, 0.1)',
                 display: 'flex',
                 flexDirection: 'column',
-                overflow: 'hidden'
+                overflow: 'hidden',
+                minWidth: '150px',
+                maxWidth: '250px'
             }}
         >
             {searchable && (

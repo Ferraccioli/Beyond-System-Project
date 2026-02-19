@@ -24,8 +24,8 @@ export default function SubHeader({
 
     return (
         <div className="w-full h-[54px] bg-white border-b border-outline-default flex items-center justify-between px-4 py-1">
-            {/* Left: Breadcrumbs & Tabs */}
-            <div className="flex items-center gap-2 h-7">
+            {/* Left: Navigation & Status */}
+            <div className="flex items-center gap-2 h-7 w-[212px]">
 
                 {/* Back Button (Icon Only) */}
                 <Button
@@ -67,7 +67,7 @@ export default function SubHeader({
             />
 
             {/* Right: Actions */}
-            <div className="flex items-center">
+            <div className="flex items-center justify-end w-[212px]">
                 <Button
                     variant="primary"
                     size="md"
