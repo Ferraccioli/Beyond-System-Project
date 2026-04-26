@@ -10,6 +10,7 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/beyond-system.es.js",
       "require": "./dist/beyond-system.umd.js"
     },
