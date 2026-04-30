@@ -1,0 +1,174 @@
+import { Meta, Typeset } from '@storybook/addon-docs/blocks';
+
+<Meta title="Tokens/Tipografia" />
+
+# Tipografia
+
+O Beyond System usa **Poppins** como fonte única, exposta via `font-sans` e `font-display` no Tailwind. A escala de tamanhos espelha as classes utilitárias do Tailwind, com dois tokens extras (`text-3xs` e `text-2xs`) para uso em labels e badges compactos.
+
+---
+
+## Família tipográfica
+
+<table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'Poppins, sans-serif', fontSize: 14 }}>
+  <thead>
+    <tr style={{ background: '#f6f8fa', borderBottom: '1px solid #d9d9e0' }}>
+      <th style={{ padding: '8px 12px', textAlign: 'left', fontWeight: 600 }}>Classe Tailwind</th>
+      <th style={{ padding: '8px 12px', textAlign: 'left', fontWeight: 600 }}>CSS var</th>
+      <th style={{ padding: '8px 12px', textAlign: 'left', fontWeight: 600 }}>Valor</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style={{ borderBottom: '1px solid #eff1f4' }}>
+      <td style={{ padding: '8px 12px' }}><code>font-sans</code></td>
+      <td style={{ padding: '8px 12px' }}><code>--font-sans</code></td>
+      <td style={{ padding: '8px 12px' }}>'Poppins', sans-serif</td>
+    </tr>
+    <tr>
+      <td style={{ padding: '8px 12px' }}><code>font-display</code></td>
+      <td style={{ padding: '8px 12px' }}><code>--font-display</code></td>
+      <td style={{ padding: '8px 12px' }}>'Poppins', sans-serif</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+## Escala de tamanhos
+
+<Typeset
+  fontSizes={[10, 11, 12, 14, 16, 18, 20, 24, 30, 36, 48]}
+  fontWeight={400}
+  sampleText="Beyond System"
+  fontFamily="'Poppins', sans-serif"
+/>
+
+<table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'Poppins, sans-serif', fontSize: 14, marginTop: 24 }}>
+  <thead>
+    <tr style={{ background: '#f6f8fa', borderBottom: '1px solid #d9d9e0' }}>
+      <th style={{ padding: '8px 12px', textAlign: 'left', fontWeight: 600 }}>Classe Tailwind</th>
+      <th style={{ padding: '8px 12px', textAlign: 'left', fontWeight: 600 }}>CSS var</th>
+      <th style={{ padding: '8px 12px', textAlign: 'left', fontWeight: 600 }}>Tamanho</th>
+      <th style={{ padding: '8px 12px', textAlign: 'left', fontWeight: 600 }}>Uso típico</th>
+    </tr>
+  </thead>
+  <tbody>
+    {[
+      ['text-3xs', '--text-3xs', '10px', 'Badges, rótulos mínimos'],
+      ['text-2xs', '--text-2xs', '11px', 'Captions compactos'],
+      ['text-xs',  '--text-xs',  '12px', 'Labels, tags, helper text'],
+      ['text-sm',  '--text-sm',  '14px', 'Corpo secundário, placeholders'],
+      ['text-base','--text-base','16px', 'Corpo principal'],
+      ['text-lg',  '--text-lg',  '18px', 'Subtítulos, destaque de parágrafo'],
+      ['text-xl',  '--text-xl',  '20px', 'Títulos de seção'],
+      ['text-2xl', '--text-2xl', '24px', 'Títulos de página'],
+      ['text-3xl', '--text-3xl', '30px', 'Headlines'],
+      ['text-4xl', '--text-4xl', '36px', 'Display'],
+      ['text-5xl', '--text-5xl', '48px', 'Display grande'],
+      ['text-6xl', '--text-6xl', '60px', 'Hero'],
+      ['text-7xl', '--text-7xl', '72px', 'Hero grande'],
+      ['text-8xl', '--text-8xl', '96px', 'Poster'],
+      ['text-9xl', '--text-9xl', '128px','Poster grande'],
+    ].map(([cls, var_, size, uso], i) => (
+      <tr key={cls} style={{ borderBottom: '1px solid #eff1f4', background: i % 2 === 0 ? '#fff' : '#fafafa' }}>
+        <td style={{ padding: '8px 12px' }}><code>{cls}</code></td>
+        <td style={{ padding: '8px 12px' }}><code>{var_}</code></td>
+        <td style={{ padding: '8px 12px' }}>{size}</td>
+        <td style={{ padding: '8px 12px', color: '#696c71' }}>{uso}</td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+
+---
+
+## Pesos
+
+Poppins carrega todos os pesos (100–900). Use apenas os abaixo para manter consistência.
+
+<div style={{ display: 'flex', flexDirection: 'column', gap: 12, fontFamily: 'Poppins, sans-serif', marginBottom: 24 }}>
+  {[
+    [300, 'font-light',    'Subtítulos hero, texto decorativo'],
+    [400, 'font-normal',   'Corpo, parágrafos'],
+    [500, 'font-medium',   'Labels, itens de menu, botões'],
+    [600, 'font-semibold', 'Títulos de seção, cabeçalhos de card'],
+    [700, 'font-bold',     'Headlines, títulos de página'],
+  ].map(([weight, cls, uso]) => (
+    <div key={weight} style={{ display: 'flex', alignItems: 'baseline', gap: 16, padding: '12px 16px', background: '#f6f8fa', borderRadius: 6 }}>
+      <span style={{ fontWeight: weight, fontSize: 22, minWidth: 200 }}>Beyond System</span>
+      <code style={{ fontSize: 12, color: '#4378ff', minWidth: 140 }}>{cls}</code>
+      <span style={{ fontSize: 12, color: '#696c71' }}>{weight} — {uso}</span>
+    </div>
+  ))}
+</div>
+
+---
+
+## Padrões de combinação
+
+```html
+<!-- Título de página -->
+<h1 class="font-sans text-2xl font-bold text-default">Título</h1>
+
+<!-- Subtítulo de seção -->
+<h2 class="font-sans text-xl font-semibold text-default">Seção</h2>
+
+<!-- Corpo principal -->
+<p class="font-sans text-base font-normal text-body">Parágrafo</p>
+
+<!-- Corpo secundário -->
+<p class="font-sans text-sm font-normal text-body">Texto secundário</p>
+
+<!-- Label de campo -->
+<label class="font-sans text-xs font-medium text-default">Rótulo</label>
+
+<!-- Helper / caption -->
+<span class="font-sans text-xs font-normal text-muted">Texto auxiliar</span>
+
+<!-- Badge / tag compacta -->
+<span class="font-sans text-2xs font-medium text-body">Badge</span>
+```
+
+---
+
+## Cores de texto
+
+<table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'Poppins, sans-serif', fontSize: 14 }}>
+  <thead>
+    <tr style={{ background: '#f6f8fa', borderBottom: '1px solid #d9d9e0' }}>
+      <th style={{ padding: '8px 12px', textAlign: 'left', fontWeight: 600 }}>Classe Tailwind</th>
+      <th style={{ padding: '8px 12px', textAlign: 'left', fontWeight: 600 }}>CSS var</th>
+      <th style={{ padding: '8px 12px', textAlign: 'left', fontWeight: 600 }}>Amostra</th>
+      <th style={{ padding: '8px 12px', textAlign: 'left', fontWeight: 600 }}>Uso</th>
+    </tr>
+  </thead>
+  <tbody>
+    {[
+      ['text-default',  '--color-default',  '#202123', 'Títulos e texto principal'],
+      ['text-body',     '--color-body',     '#696c71', 'Corpo, parágrafos'],
+      ['text-muted',    '--color-muted',    '#94979b', 'Helper text, placeholders'],
+      ['text-disabled', '--color-disabled', '#cbcdd3', 'Campos e ações desabilitadas'],
+    ].map(([cls, var_, hex, uso], i) => (
+      <tr key={cls} style={{ borderBottom: '1px solid #eff1f4', background: i % 2 === 0 ? '#fff' : '#fafafa' }}>
+        <td style={{ padding: '8px 12px' }}><code>{cls}</code></td>
+        <td style={{ padding: '8px 12px' }}><code>{var_}</code></td>
+        <td style={{ padding: '8px 12px' }}>
+          <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 14, color: hex }}>
+            Texto de exemplo
+          </span>
+        </td>
+        <td style={{ padding: '8px 12px', color: '#696c71' }}>{uso}</td>
+      </tr>
+    ))}
+    <tr style={{ borderBottom: '1px solid #eff1f4' }}>
+      <td style={{ padding: '8px 12px' }}><code>text-inverted</code></td>
+      <td style={{ padding: '8px 12px' }}><code>--color-inverted</code></td>
+      <td style={{ padding: '8px 12px', background: '#202123', borderRadius: 4 }}>
+        <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 14, color: '#ffffff' }}>
+          Texto de exemplo
+        </span>
+      </td>
+      <td style={{ padding: '8px 12px', color: '#696c71' }}>Texto sobre fundos escuros</td>
+    </tr>
+  </tbody>
+</table>

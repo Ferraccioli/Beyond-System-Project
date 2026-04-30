@@ -1,0 +1,88 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Tokens/Espaçamento" />
+
+# Espaçamento
+
+Base de **4px**. Os 11 tokens do Beyond System mapeiam diretamente para as classes de espaçamento do Tailwind — `p-`, `m-`, `gap-`, `space-` e afins.
+
+---
+
+## Escala
+
+<div style={{ fontFamily: 'Poppins, sans-serif', display: 'flex', flexDirection: 'column', gap: 8 }}>
+  {[
+    { cls: '0',  token: '--spacing-0',  px: 0,   rem: '0rem' },
+    { cls: '1',  token: '--spacing-1',  px: 4,   rem: '0.25rem' },
+    { cls: '2',  token: '--spacing-2',  px: 8,   rem: '0.5rem' },
+    { cls: '3',  token: '--spacing-3',  px: 12,  rem: '0.75rem' },
+    { cls: '4',  token: '--spacing-4',  px: 16,  rem: '1rem' },
+    { cls: '5',  token: '--spacing-5',  px: 20,  rem: '1.25rem' },
+    { cls: '6',  token: '--spacing-6',  px: 24,  rem: '1.5rem' },
+    { cls: '7',  token: '--spacing-7',  px: 28,  rem: '1.75rem' },
+    { cls: '8',  token: '--spacing-8',  px: 32,  rem: '2rem' },
+    { cls: '9',  token: '--spacing-9',  px: 36,  rem: '2.25rem' },
+    { cls: '10', token: '--spacing-10', px: 40,  rem: '2.5rem' },
+  ].map(({ cls, token, px, rem }) => (
+    <div key={cls} style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+      <div style={{ width: 80, flexShrink: 0 }}>
+        <code style={{ fontSize: 12, color: '#4378ff' }}>{`p-${cls}`}</code>
+      </div>
+      <div style={{ width: 110, flexShrink: 0 }}>
+        <code style={{ fontSize: 11, color: '#696c71' }}>{token}</code>
+      </div>
+      <div
+        style={{
+          height: 20,
+          width: px === 0 ? 2 : px,
+          backgroundColor: '#4378ff',
+          borderRadius: 2,
+          flexShrink: 0,
+          opacity: 0.7,
+        }}
+      />
+      <span style={{ fontSize: 12, color: '#696c71', minWidth: 40 }}>{px}px</span>
+      <span style={{ fontSize: 11, color: '#94979b' }}>{rem}</span>
+    </div>
+  ))}
+</div>
+
+---
+
+## Uso por contexto
+
+<table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'Poppins, sans-serif', fontSize: 14 }}>
+  <thead>
+    <tr style={{ background: '#f6f8fa', borderBottom: '1px solid #d9d9e0' }}>
+      <th style={{ padding: '8px 12px', textAlign: 'left', fontWeight: 600 }}>Contexto</th>
+      <th style={{ padding: '8px 12px', textAlign: 'left', fontWeight: 600 }}>Classes recomendadas</th>
+      <th style={{ padding: '8px 12px', textAlign: 'left', fontWeight: 600 }}>Valor</th>
+    </tr>
+  </thead>
+  <tbody>
+    {[
+      ['Padding interno de botão (sm)',    'px-3 py-1.5',  '12px / 6px'],
+      ['Padding interno de botão (md)',    'px-4 py-2',    '16px / 8px'],
+      ['Padding interno de input',         'px-3 py-2',    '12px / 8px'],
+      ['Padding interno de card',          'p-4 ou p-6',   '16px ou 24px'],
+      ['Gap entre elementos de form',      'gap-3 ou gap-4','12px ou 16px'],
+      ['Gap entre seções de página',       'gap-6 ou gap-8','24px ou 32px'],
+      ['Margin entre label e input',       'mb-1',         '4px'],
+      ['Padding de page container',        'p-6 ou p-8',   '24px ou 32px'],
+      ['Gap em listas / menus',            'gap-1',        '4px'],
+      ['Espaço entre ícone e texto',       'gap-2',        '8px'],
+    ].map(([ctx, cls, val], i) => (
+      <tr key={ctx} style={{ borderBottom: '1px solid #eff1f4', background: i % 2 === 0 ? '#fff' : '#fafafa' }}>
+        <td style={{ padding: '8px 12px', color: '#202123' }}>{ctx}</td>
+        <td style={{ padding: '8px 12px' }}><code style={{ color: '#4378ff', fontSize: 12 }}>{cls}</code></td>
+        <td style={{ padding: '8px 12px', color: '#696c71' }}>{val}</td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+
+---
+
+## Além de `p-10`
+
+Para valores maiores, use as classes Tailwind padrão: `p-12` (48px), `p-14` (56px), `p-16` (64px), `p-20` (80px), `p-24` (96px). Não é necessário adicionar tokens customizados para esses valores.

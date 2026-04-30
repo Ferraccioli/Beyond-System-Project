@@ -1,0 +1,77 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Tokens/Border Radius" />
+
+# Border Radius
+
+Os tokens de raio do Beyond System mapeiam 1:1 com as classes `rounded-*` do Tailwind v4. O token `--radius-xs` (2px) e `--radius-4xl` (32px) são expostos como tokens customizados; os demais usam os defaults do Tailwind.
+
+---
+
+## Escala visual
+
+<div style={{ fontFamily: 'Poppins, sans-serif', display: 'flex', flexWrap: 'wrap', gap: 20, padding: '8px 0' }}>
+  {[
+    { cls: 'rounded-none', token: '—',            px: '0px',    r: 0 },
+    { cls: 'rounded-xs',   token: '--radius-xs',  px: '2px',    r: 2 },
+    { cls: 'rounded',      token: '--radius-sm',  px: '4px',    r: 4 },
+    { cls: 'rounded-md',   token: '--radius-md',  px: '6px',    r: 6 },
+    { cls: 'rounded-lg',   token: '--radius-lg',  px: '8px',    r: 8 },
+    { cls: 'rounded-xl',   token: '--radius-xl',  px: '12px',   r: 12 },
+    { cls: 'rounded-2xl',  token: '--radius-2xl', px: '16px',   r: 16 },
+    { cls: 'rounded-3xl',  token: '--radius-3xl', px: '24px',   r: 24 },
+    { cls: 'rounded-4xl',  token: '--radius-4xl', px: '32px',   r: 32 },
+    { cls: 'rounded-full', token: '--radius-full','px': '9999px', r: 9999 },
+  ].map(({ cls, token, px, r }) => (
+    <div key={cls} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+      <div
+        style={{
+          width: 64,
+          height: 64,
+          backgroundColor: '#ecf1ff',
+          border: '1.5px solid #4378ff',
+          borderRadius: Math.min(r, 32),
+        }}
+      />
+      <div style={{ textAlign: 'center' }}>
+        <div style={{ fontSize: 11, color: '#4378ff', fontWeight: 500 }}>{cls}</div>
+        <div style={{ fontSize: 10, color: '#696c71' }}>{px}</div>
+      </div>
+    </div>
+  ))}
+</div>
+
+---
+
+## Uso por componente
+
+<table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'Poppins, sans-serif', fontSize: 14 }}>
+  <thead>
+    <tr style={{ background: '#f6f8fa', borderBottom: '1px solid #d9d9e0' }}>
+      <th style={{ padding: '8px 12px', textAlign: 'left', fontWeight: 600 }}>Componente / Elemento</th>
+      <th style={{ padding: '8px 12px', textAlign: 'left', fontWeight: 600 }}>Classe Tailwind</th>
+      <th style={{ padding: '8px 12px', textAlign: 'left', fontWeight: 600 }}>Valor</th>
+    </tr>
+  </thead>
+  <tbody>
+    {[
+      ['Input, TextArea',             'rounded-md',   '6px'],
+      ['Button (padrão)',             'rounded-md',   '6px'],
+      ['Button (pill / full)',        'rounded-full', '9999px'],
+      ['Card, Dropdown, Menu',        'rounded-lg',   '8px'],
+      ['Modal, Dialog',               'rounded-xl',   '12px'],
+      ['Toast, Chip, Badge',          'rounded-md',   '6px'],
+      ['Avatar',                      'rounded-full', '9999px'],
+      ['Tag',                         'rounded',      '4px'],
+      ['Tooltip',                     'rounded',      '4px'],
+      ['Sidebar, Panel lateral',      'rounded-2xl',  '16px'],
+      ['Indicador de status (dot)',    'rounded-full', '9999px'],
+    ].map(([comp, cls, val], i) => (
+      <tr key={comp} style={{ borderBottom: '1px solid #eff1f4', background: i % 2 === 0 ? '#fff' : '#fafafa' }}>
+        <td style={{ padding: '8px 12px', color: '#202123' }}>{comp}</td>
+        <td style={{ padding: '8px 12px' }}><code style={{ color: '#4378ff', fontSize: 12 }}>{cls}</code></td>
+        <td style={{ padding: '8px 12px', color: '#696c71' }}>{val}</td>
+      </tr>
+    ))}
+  </tbody>
+</table>
